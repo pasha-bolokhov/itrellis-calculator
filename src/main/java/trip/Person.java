@@ -27,6 +27,14 @@ public class Person {
         this.name = name;
     }
 
+    public double[] getExpenses() {
+        return this.expenses;
+    }
+
+    public void setExpenses(double[] expenses) {
+        this.expenses = expenses;
+    }
+
     public double getAmount() {
         return this.amount;
     }
