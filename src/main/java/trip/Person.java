@@ -22,7 +22,6 @@ public class Person {
         return this.name;
     }
 
-    //GGGG also make name final if possible
     public void setName(String name) {
         this.name = name;
     }
