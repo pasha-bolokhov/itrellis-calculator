@@ -70,7 +70,7 @@ public class Person {
         }
 
         // GGGG
-        if (this.amount < 0) {
+        if (this.amount < -0.01) {
             System.out.format("person %s got paid %g but was owed only %g\n",
                                 this.name, payment, this.amount + payment);
         }

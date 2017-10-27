@@ -53,34 +53,53 @@ public class TripController {
         // sort recipients in increasing deficit order
         recipients.sort((a, b) -> Double.compare(a.getAmount(), b.getAmount()) );
 
-        debtors.stream().forEach(p -> System.out.format("GGGG debtor %s owes %g\n", p.getName(), p.getAmount()));
-        recipients.stream().forEach(p -> System.out.format("GGGG recpt %s misses %g\n", p.getName(), p.getAmount()));
+        debtors.stream().forEach(p -> System.out.format("GGGG debtor %s[paid %g] owes %g\n",
+                                    p.getName(), p.getTotal(), p.getAmount()));
+        recipients.stream().forEach(p -> System.out.format("GGGG recpt %s[paid %g] misses %g\n",
+                                    p.getName(), p.getTotal(), p.getAmount()));
 
         // Fill in all payments
+        // Since, when possible, payments are done in equal transactions to all unpaid people,
+        // the array of recipients stays sorted in increasing deficit order
+        // When a recipient is reimbursed in full, he/she is excluded from further consideration
         Person[] recipientArray = recipients.toArray(new Person[recipients.size()]);
         int firstUnpaid = 0;
         int lastRecipient = recipientArray.length - 1;
-        for (Person p : debtors) {
+        for (Person d : debtors) {
             int numUnpaid = lastRecipient - firstUnpaid + 1;    // this allows to split the payment evenly
                                                                 // across all unpaid people
 
-            double equalPayments = p.getAmount() / numUnpaid;         // attempt to split payments evenly
+            double equalPayments = d.getAmount() / numUnpaid;   // attempt to split payments evenly
+                                                                // numUnpaid will not be zero here
 
+            // run through all people who haven't been fully reimbursed yet
             for (int j = firstUnpaid; j <= lastRecipient; j++) {
                 Person r = recipientArray[j];
+
+                // Form a transaction from person "d" to person "r"
                 double transaction = equalPayments;
 
-                if (r.getAmount() <= transaction) {                 // person "r" about to be paid in full
+                if (r.getAmount() <= transaction) {             // person "r" about to be paid in full
+                    // this is what they are getting paid
                     transaction = r.getAmount();
+
+                    // remove person "r" from further consideration
                     firstUnpaid++;
-                    numUnpaid--;                                // numUnpaid decreases at most once per loop
+                    numUnpaid--;
+
+                    if (numUnpaid > 0) {                        // split the rest of the owed amount equally
+                                                                // among the unpaid people
+                        equalPayments = (d.getAmount() - transaction) / numUnpaid;
+                    }
                 }
 
-                System.out.format("GGGG TTTTTTTT %s[%g] pays %g to %s[%g]  ==>  %s[%g]\n",
-                        p.getName(), p.getAmount(), transaction, r.getName(), r.getAmount(),
-                        r.getName(), r.getAmount() - transaction);
+                System.out.format("GGGG TTTTTTTT %s[%.2f] pays \t%g to \t%s[%.2f]\t ==> \t %s[%.2f]" +
+                                    " \t(%s[%.2f])\n",
+                        d.getName(), d.getAmount(), transaction, r.getName(), r.getAmount(),
+                        r.getName(), r.getAmount() - transaction,
+                        d.getName(), d.getAmount() - transaction);
 
-                p.pay(transaction);
+                d.pay(transaction);
                 r.pay(transaction);
             }
         }
