@@ -6,6 +6,7 @@ public class Person {
 
     private String name;
     private double[] expenses;
+    private double total = 0.0;
     private double amount;                // either paid or owed
 
     public Person(String name, double[] expenses) {
@@ -42,9 +43,13 @@ public class Person {
         this.amount = amount;
     }
 
+    public double calcTotal() {
+        this.total = DoubleStream.of(this.expenses).sum();
+        return this.total;
+    }
+
     public double calcDebt(double equalShare) {
-        double paid = DoubleStream.of(this.expenses).sum();
-        this.amount = equalShare - paid;
+        this.amount = equalShare - this.total;
         return this.amount;
     }
 }
