@@ -23,6 +23,27 @@ public class TripController {
 
         // Calculate debts and other analytics
         ExpenseAnalytics analytics = new ExpenseAnalytics(people);
+
+        // Generate all payments
+        Reimbursement[] allReimbursements = generatePayments(analytics);
+
+        // Generate and send the response
+        return new TripResponse(counter.incrementAndGet(), allReimbursements);
+    }
+
+    /**
+     *
+     */
+    public static double roundTransaction(double transaction) {
+        return Math.floor(transaction * 100) / 100.0;
+    }
+
+    /**
+     *
+     * @param analytics
+     * @return
+     */
+    private Reimbursement[] generatePayments(ExpenseAnalytics analytics) {
         List<Person> debtors = analytics.getDebtors();
         List<Person> recipients = analytics.getRecipients();
 
@@ -34,9 +55,9 @@ public class TripController {
 
         // GGGG
         debtors.stream().forEach(p -> System.out.format("GGGG debtor %s[paid %g] owes %g\n",
-                                    p.getName(), p.getTotal(), p.getAmount()));
+                p.getName(), p.getTotal(), p.getAmount()));
         recipients.stream().forEach(p -> System.out.format("GGGG recpt %s[paid %g] misses %g\n",
-                                    p.getName(), p.getTotal(), p.getAmount()));
+                p.getName(), p.getTotal(), p.getAmount()));
 
         // Fill in all payments
         // Since, when possible, payments are done in equal transactions to all unpaid people,
@@ -44,8 +65,8 @@ public class TripController {
         // When a recipient is reimbursed in full, he/she is excluded from further consideration
         Person[] recipientArray = recipients.toArray(new Person[recipients.size()]);
         List<Reimbursement> reimbursementList = new ArrayList<Reimbursement>();             // prefer to keep it
-                                                                                            // as a list although
-                                                                                            // the size is known
+        // as a list although
+        // the size is known
         int firstUnpaid = 0;
         final int lastRecipient = recipientArray.length - 1;
         for (Person d : debtors) {
@@ -69,10 +90,10 @@ public class TripController {
 
                     // remove person "r" from further consideration
                     firstUnpaid++;
-               }
+                }
 
                 System.out.format("GGGG TTTTTTTT %s[%.2f] pays \t%g to \t%s[%.2f]\t ==> \t %s[%.2f]" +
-                                    " \t(%s[%.2f])\n",
+                                " \t(%s[%.2f])\n",
                         d.getName(), d.getAmount(), transaction, r.getName(), r.getAmount(),
                         r.getName(), r.getAmount() - transaction,
                         d.getName(), d.getAmount() - transaction);
@@ -85,21 +106,11 @@ public class TripController {
 
             // for a reimbursement from this debtor
             Reimbursement reimbursement = new Reimbursement(d.getName(),
-                                                            payments.toArray(new Transaction[payments.size()]));
+                    payments.toArray(new Transaction[payments.size()]));
             reimbursementList.add(reimbursement);
         }
 
         // convert reimbursements into an array
-        Reimbursement[] allReimbursements = reimbursementList.toArray(new Reimbursement[reimbursementList.size()]);
-
-        // generate and send the response
-        return new TripResponse(counter.incrementAndGet(), allReimbursements);
-    }
-
-    /**
-     *
-     */
-    public static double roundTransaction(double transaction) {
-        return Math.floor(transaction * 100) / 100.0;
+        return reimbursementList.toArray(new Reimbursement[reimbursementList.size()]);
     }
 }

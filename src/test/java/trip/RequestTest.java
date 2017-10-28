@@ -122,9 +122,10 @@ public class RequestTest {
         }
 
         // check all debtors and recipients that the amounts have equalized
-        System.out.format("GGGG -------------------------------------------------------\n");
-        allDebtors.stream().forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal());} );
-        allRecipients.stream().forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal());} );
+        allDebtors.stream()
+                .forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal()); } );
+        allRecipients.stream()
+                .forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal()); } );
 
         double maxTotal = Stream.concat(allDebtors.stream(), allRecipients.stream())
                             .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
