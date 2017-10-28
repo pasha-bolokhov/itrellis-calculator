@@ -20,8 +20,6 @@ public class TripController {
 
     @RequestMapping("/trip")
     public Trip trip(@RequestBody Person[] people) {
-        LOGGER.info("GGGG Got " + people.length + " people");
-
         // calculate total expenses
         double grandTotal = 0.0;
         for (Person p : people) {
@@ -29,15 +27,16 @@ public class TripController {
         }
 
         // everyone's share
-        int n = people.length;
-        double share = grandTotal / n;
-        System.out.format("GGGG grandTotal = %g, share = %g\n", grandTotal, share);
+        double share = grandTotal / people.length;
+        System.out.format("GGGG grandTotal = %g, share = %g, remnant = %d cents\n",
+                            grandTotal, share, (Math.round(grandTotal * 100.0) % people.length));
 
         // calculate everyone's debt
         List<Person> debtors = new ArrayList<Person>();
         List<Person> recipients = new ArrayList<Person>();
         for (Person p : people) {
             p.calcDebt(share);
+            // sort the person either into debtors or recipients
             if (p.getAmount() > 0) {
                 debtors.add(p);
             } else {
@@ -53,6 +52,7 @@ public class TripController {
         // sort recipients in increasing deficit order
         recipients.sort((a, b) -> Double.compare(a.getAmount(), b.getAmount()) );
 
+        // GGGG
         debtors.stream().forEach(p -> System.out.format("GGGG debtor %s[paid %g] owes %g\n",
                                     p.getName(), p.getTotal(), p.getAmount()));
         recipients.stream().forEach(p -> System.out.format("GGGG recpt %s[paid %g] misses %g\n",
@@ -64,34 +64,30 @@ public class TripController {
         // When a recipient is reimbursed in full, he/she is excluded from further consideration
         Person[] recipientArray = recipients.toArray(new Person[recipients.size()]);
         int firstUnpaid = 0;
-        int lastRecipient = recipientArray.length - 1;
+        final int lastRecipient = recipientArray.length - 1;
         for (Person d : debtors) {
-            int numUnpaid = lastRecipient - firstUnpaid + 1;    // this allows to split the payment evenly
-                                                                // across all unpaid people
-
-            double equalPayments = d.getAmount() / numUnpaid;   // attempt to split payments evenly
-                                                                // numUnpaid will not be zero here
+            List<Transaction> payments = new ArrayList<Transaction>();
 
             // run through all people who haven't been fully reimbursed yet
             for (int j = firstUnpaid; j <= lastRecipient; j++) {
                 Person r = recipientArray[j];
 
+                // attempt to split payments evenly
+                // note that we have to re-adjust this amount after every transaction
+                // because of rounding
+                double equalPayments = d.getAmount() / (lastRecipient - j + 1);
+//                double equalPayments = d.getAmount() / numUnpaid;   // attempt to split payments evenly
+
                 // Form a transaction from person "d" to person "r"
-                double transaction = equalPayments;
+                double transaction = roundTransaction(equalPayments);
 
                 if (r.getAmount() <= transaction) {             // person "r" about to be paid in full
                     // this is what they are getting paid
-                    transaction = r.getAmount();
+                    transaction = roundTransaction(r.getAmount());
 
                     // remove person "r" from further consideration
                     firstUnpaid++;
-                    numUnpaid--;
-
-                    if (numUnpaid > 0) {                        // split the rest of the owed amount equally
-                                                                // among the unpaid people
-                        equalPayments = (d.getAmount() - transaction) / numUnpaid;
-                    }
-                }
+               }
 
                 System.out.format("GGGG TTTTTTTT %s[%.2f] pays \t%g to \t%s[%.2f]\t ==> \t %s[%.2f]" +
                                     " \t(%s[%.2f])\n",
@@ -99,13 +95,26 @@ public class TripController {
                         r.getName(), r.getAmount() - transaction,
                         d.getName(), d.getAmount() - transaction);
 
+                // do the transaction
                 d.pay(transaction);
                 r.pay(transaction);
+                payments.add(new Transaction(r.getName(), transaction));
             }
+
+            // for a reimbursement from this debtor
+            Reimbursement reimbursement = new Reimbursement(d.getName(),
+                                                            payments.toArray(new Transaction[payments.size()]));
         }
 
         // GGGG stub
         return new Trip(counter.incrementAndGet(),
                         String.format(answerTemplate, people[0].getName(), 0.0));
+    }
+
+    /**
+     *
+     */
+    private double roundTransaction(double transaction) {
+        return (Math.floor(transaction * 100)) / 100.0;
     }
 }
