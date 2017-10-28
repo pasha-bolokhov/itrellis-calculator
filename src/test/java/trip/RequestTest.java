@@ -14,8 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
-import org.springframework.http.ResponseEntity;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +33,6 @@ public class RequestTest {
 
     @Test
     public void reimbursementTest() throws Exception, IOException {
-//        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/trip", String.class).contains("GGGG"));
-//        System.out.println("******************* GGGG response is: " +
-//                            this.restTemplate.getForObject("http://localhost:" + port + "/trip", String.class));
         ObjectMapper objectMapper = new ObjectMapper();
         Person[] people = objectMapper.readValue(new File("src/test/json/sample-0.json"), Person[].class);
         logger.info("GGGG first name is = " + people[0].getName());
@@ -48,6 +43,16 @@ public class RequestTest {
 
         logger.info("GGGG got response plan with {} reimbursements", plan.getReimbursements().length);
 
-        
+        // check the payment plan
+        checkPlan(plan, people);
+    }
+
+    private void checkPlan(TripResponse plan, Person[] people) {
+        // turn array into map
+//        Map<String, double> peopleMap =
+//                Stream.of(people).collect(toMap(Person::getName, p -> p.getAmount()));
+//        for (Reimbursement reimbursement : plan.getReimbursements()) {
+//
+//        }
     }
 }

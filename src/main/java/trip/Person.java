@@ -12,13 +12,10 @@ public class Person {
 
     public Person(String name, double[] expenses) {
         this.name = name;
-        this.expenses = java.util.Arrays.copyOfRange(expenses, 0, expenses.length - 1);
+        this.setExpenses(expenses);
     }
 
-    public Person() {
-        this.name = "";
-        this.expenses = new double[] {0, 0};
-    }
+    public Person() {}
 
     public String getName() {
         return this.name;
@@ -34,6 +31,7 @@ public class Person {
 
     public void setExpenses(double[] expenses) {
         this.expenses = expenses;
+        this.calcTotal();
     }
 
     public double getAmount() {

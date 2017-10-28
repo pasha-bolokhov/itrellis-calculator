@@ -1,7 +1,6 @@
 package trip;
 
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -9,47 +8,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 public class TripController {
-    private static final Logger LOGGER = Logger.getLogger(TripController.class.getName()); // GGGG
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());     // GGGG
 
     private final AtomicLong counter = new AtomicLong();
 
     @RequestMapping("/trip")
     public TripResponse trip(@RequestBody Person[] people) {
-        // calculate total expenses
-        double grandTotal = 0.0;
-        for (Person p : people) {
-            grandTotal += p.calcTotal();
-        }
 
-        // everyone's share
-        double share = grandTotal / people.length;
-        System.out.format("GGGG grandTotal = %g, share = %g, remnant = %d cents\n",
-                            grandTotal, share, (Math.round(grandTotal * 100.0) % people.length));
-
-        // calculate everyone's debt
-        List<Person> debtors = new ArrayList<Person>();
-        List<Person> recipients = new ArrayList<Person>();
-        for (Person p : people) {
-            p.calcDebt(share);
-            // sort the person either into debtors or recipients
-            if (p.getAmount() > 0) {
-                debtors.add(p);
-            } else {
-                recipients.add(p);
-                // for recipients, the amount is negative initially
-                p.setAmount(-p.getAmount());
-            }
-        }
+        ExpenseAnalytics analytics = new ExpenseAnalytics(people);
+        List<Person> debtors = analytics.getDebtors();
+        List<Person> recipients = analytics.getRecipients();
 
         // sort debtors in decreasing debt order
-        debtors.sort((a, b) -> -Double.compare(a.getAmount(), b.getAmount()) );
+        debtors.sort( (a, b) -> -Double.compare(a.getAmount(), b.getAmount()) );
 
         // sort recipients in increasing deficit order
-        recipients.sort((a, b) -> Double.compare(a.getAmount(), b.getAmount()) );
+        recipients.sort( (a, b) -> Double.compare(a.getAmount(), b.getAmount()) );
 
         // GGGG
         debtors.stream().forEach(p -> System.out.format("GGGG debtor %s[paid %g] owes %g\n",
