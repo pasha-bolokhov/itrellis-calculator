@@ -21,8 +21,6 @@ public class ExpenseAnalytics {
         // everyone's share
         double share = this.getTotal() / people.length;
         this.setShare(share);
-        System.out.format("GGGG grandTotal = %g, share = %g, remnant = %d cents\n",
-                grandTotal, share, (Math.round(grandTotal * 100.0) % people.length));
 
         // calculate everyone's debt and split the team into debtors and recipients
         List<Person> debtors = new ArrayList<Person>();

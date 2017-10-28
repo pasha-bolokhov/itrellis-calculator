@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 @RestController
 public class TripController {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());     // GGGG
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final AtomicLong counter = new AtomicLong();
 
@@ -66,13 +66,7 @@ public class TripController {
                     transaction = roundTransaction(r.getAmount());
                 }
 
-                System.out.format("GGGG RRRRRRRRR %s[%.2f] pays \t%g to \t%s[%.2f]\t ==> \t %s[%.2f]" +
-                                " \t(%s[%.2f])\n",
-                        d.getName(), d.getAmount(), transaction, r.getName(), r.getAmount(),
-                        r.getName(), r.getAmount() - transaction,
-                        d.getName(), d.getAmount() - transaction);
-
-                // do the transaction
+                // perform the transaction
                 d.pay(transaction);
                 r.pay(transaction);
                 reimbursementMap.get(d).add(new Transaction(r.getName(), transaction));
@@ -84,8 +78,6 @@ public class TripController {
                 .map( entry -> new Reimbursement(entry.getKey().getName(),
                                                 entry.getValue().toArray(new Transaction[0])) )
                 .toArray(Reimbursement[]::new);
-
-//        Stream.of(reimbursementMap.entrySet().toArray()).forEach(e -> System.out.format("%s\n", e.getKey().getName()));
     }
 
     /**
@@ -102,12 +94,6 @@ public class TripController {
 
         // sort recipients in increasing deficit order
         recipients.sort( (a, b) -> Double.compare(a.getAmount(), b.getAmount()) );
-
-        // GGGG
-        debtors.stream().forEach(p -> System.out.format("GGGG debtor %s[paid %g] owes %g\n",
-                p.getName(), p.getTotal(), p.getAmount()));
-        recipients.stream().forEach(p -> System.out.format("GGGG recpt %s[paid %g] misses %g\n",
-                p.getName(), p.getTotal(), p.getAmount()));
 
         // Fill in all payments
         // Since, when possible, payments are done in equal transactions to all unpaid people,
@@ -142,13 +128,7 @@ public class TripController {
                     firstUnpaid++;
                 }
 
-                System.out.format("GGGG TTTTTTTT %s[%.2f] pays \t%g to \t%s[%.2f]\t ==> \t %s[%.2f]" +
-                                " \t(%s[%.2f])\n",
-                        d.getName(), d.getAmount(), transaction, r.getName(), r.getAmount(),
-                        r.getName(), r.getAmount() - transaction,
-                        d.getName(), d.getAmount() - transaction);
-
-                // do the transaction
+                // perform the transaction
                 d.pay(transaction);
                 r.pay(transaction);
                 payments.add(new Transaction(r.getName(), transaction));

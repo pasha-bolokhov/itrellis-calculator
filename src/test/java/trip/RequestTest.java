@@ -29,7 +29,6 @@ public class RequestTest {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     @LocalServerPort
     private int port;
 
@@ -49,6 +48,11 @@ public class RequestTest {
     @Test
     public void evenLongerTestOnResponse() throws Exception, IOException {
         runTestDataFile("src/test/json/sample-2.json");
+    }
+
+    @Test
+    public void alternativeTestOnResponse() throws Exception, IOException {
+        runTestDataFile("src/test/json/sample-3.json");
     }
 
     /**
@@ -98,14 +102,6 @@ public class RequestTest {
 
             // perform all transactions
             for (Transaction transaction : reimbursement.getPayments()) {
-
-                logger.info(String.format("GGGG %s[%.2f] \tpays\t %g \tto %s[%.2f] \t=>\t %s[%.2f] \t\t(%s[%g])",
-                                        reimbursement.getName(), debt, transaction.getAmount(),
-                                        transaction.getRecipient(), recipientsMap.get(transaction.getRecipient()).getAmount(),
-                                        transaction.getRecipient(),
-                                            recipientsMap.get(transaction.getRecipient()).getAmount() + transaction.getAmount(),
-                                        reimbursement.getName(), debt - transaction.getAmount()));
-
                 String recipientName = transaction.getRecipient();
                 assertThat(recipientsMap).containsKey(recipientName);
                 Person recipient = recipientsMap.get(recipientName);
@@ -130,6 +126,6 @@ public class RequestTest {
         logger.info("maximum discrepancy = {}", Math.abs(maxTotal - minTotal));
 
         // test maximum tolerance
-        assertThat(Math.round(Math.abs(maxTotal - minTotal) * 100) / 100.0).isLessThanOrEqualTo(0.02);
+        assertThat(Math.round(Math.abs(maxTotal - minTotal) * 100) / 100.0).isLessThanOrEqualTo(0.05);
     }
 }
