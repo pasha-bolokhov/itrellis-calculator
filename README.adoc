@@ -7,7 +7,7 @@ A tool that equalizes payments among a team of students who have returned from a
 
 == Features
 
-NOTE: The project features Spring Boot framework for handling Http requests and JUnit for unit tests.
+The project features Spring Boot framework for handling Http requests and JUnit for unit tests.
 
 == Installation
 
@@ -39,6 +39,23 @@ or via task `bootRun`:
 
 
 == Tests
+
+Client-side testing can be done by running the server on a command line with
+
+ $ ./gradlew bootRun
+
+and connecting to it using `curl` from a different window and feeding a sample input Json structure:
+
+ $ curl --header "Content-Type:application/json" --request POST --data @src/test/json/sample-0.json localhost:8080/trip
+
+Sample input files are located in `src/test/json` directory.
+Upon successful work this returns the result in Json format.
+
+_Full-scale testing_ is performed with unit tests via
+
+ ./gradlew test
+ 
+or as part of `build` task.
 
 
 
