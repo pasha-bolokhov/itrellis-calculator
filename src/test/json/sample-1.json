@@ -1,0 +1,18 @@
+[
+	{
+		"name":		"Meagan",
+		"expenses":	[10, 20, 30]
+	},
+	{
+		"name": 	"Teagan",
+		"expenses":	[50, 70]
+	},
+	{
+		"name":		"Meghan",
+		"expenses":	[100, 200]
+	},
+	{
+		"name":		"Jessica",
+		"expenses":	[200, 200]
+	}
+]

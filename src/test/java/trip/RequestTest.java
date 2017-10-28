@@ -11,9 +11,20 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class RequestTest {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());     // GGGG
+
 
     @LocalServerPort
     private int port;
@@ -22,7 +33,12 @@ public class RequestTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void reimbursementTest() throws Exception {
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/trip", String.class).contains("GGGG"));
+    public void reimbursementTest() throws Exception, IOException {
+//        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/trip", String.class).contains("GGGG"));
+//        System.out.println("******************* GGGG response is: " +
+//                            this.restTemplate.getForObject("http://localhost:" + port + "/trip", String.class));
+        ObjectMapper objectMapper = new ObjectMapper();
+        Person[] people = objectMapper.readValue(new File("src/test/json/sample-0.json"), Person[].class);
+        logger.info("first name is = " + people[0].getName());
     }
 }
