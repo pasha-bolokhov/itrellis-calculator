@@ -7,7 +7,7 @@ A tool that equalizes payments among a team of students who have returned from a
 
 == Features
 
-The project features Spring Boot framework for handling Http requests and JUnit for unit tests.
+The project features Spring Boot framework for handling Http requests, as well as JUnit, AssertJ and other libraries
 
 == Installation
 
@@ -49,14 +49,14 @@ and connecting to it using `curl` from a different window and feeding a sample i
  $ curl --header "Content-Type:application/json" --request POST --data @src/test/json/sample-0.json localhost:8080/trip
 
 Sample input files are located in `src/test/json` directory.
-Upon successful work this returns the result in Json format.
+Upon successful work this command returns the result in Json format.
 
 _Full-scale testing_ is performed with unit tests via
 
  ./gradlew test
  
 or as part of `build` task.
-
+The reports of unit tests can be viewed in browser by opening file `build/reports/tests/test/index.html`.
 
 
 
