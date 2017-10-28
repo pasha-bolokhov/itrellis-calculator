@@ -122,17 +122,12 @@ public class RequestTest {
         }
 
         // check all debtors and recipients that the amounts have equalized
-        allDebtors.stream()
-                .forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal()); } );
-        allRecipients.stream()
-                .forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal()); } );
-
         double maxTotal = Stream.concat(allDebtors.stream(), allRecipients.stream())
                             .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
         double minTotal = Stream.concat(allDebtors.stream(), allRecipients.stream())
                 .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
 
-        System.out.format("GGGG ******************************* maximum discrepancy = %g\n", Math.abs(maxTotal - minTotal));
+        logger.info("maximum discrepancy = {}", Math.abs(maxTotal - minTotal));
 
         // test maximum tolerance
         assertThat(Math.round(Math.abs(maxTotal - minTotal) * 100) / 100.0).isLessThanOrEqualTo(0.02);

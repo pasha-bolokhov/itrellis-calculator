@@ -3,7 +3,10 @@ package trip;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +36,56 @@ public class TripController {
 
     /**
      *
+     * @param analytics
+     * @return
      */
-    public static double roundTransaction(double transaction) {
-        return Math.floor(transaction * 100) / 100.0;
+    private Reimbursement[] generatePayments(ExpenseAnalytics analytics) {
+        List<Person> debtors = analytics.getDebtors();
+        List<Person> recipients = analytics.getRecipients();
+
+        // sort debtors in decreasing debt order
+        debtors.sort( (a, b) -> -Double.compare(a.getAmount(), b.getAmount()) );
+
+        // sort recipients in decreasing deficit order
+        recipients.sort( (a, b) -> -Double.compare(a.getAmount(), b.getAmount()) );
+
+        // fill in each recipient by all debtors at once
+        Person[] debtorArray = debtors.toArray(new Person[debtors.size()]);
+        Map<Person, List<Transaction>> reimbursementMap =
+                debtors.stream().collect(Collectors.toMap(p -> p, p -> new ArrayList<Transaction>()));
+        int firstUnfinished = 0;
+        for (Person r : recipients) {
+            for (int j = firstUnfinished; j < debtorArray.length; j++) {
+                Person d = debtorArray[j];
+
+                double transaction = roundTransaction(d.getAmount());
+
+                if (transaction <= r.getAmount()) {               // person "d" about to complete paying
+                    firstUnfinished++;
+                } else {
+                    transaction = roundTransaction(r.getAmount());
+                }
+
+                System.out.format("GGGG RRRRRRRRR %s[%.2f] pays \t%g to \t%s[%.2f]\t ==> \t %s[%.2f]" +
+                                " \t(%s[%.2f])\n",
+                        d.getName(), d.getAmount(), transaction, r.getName(), r.getAmount(),
+                        r.getName(), r.getAmount() - transaction,
+                        d.getName(), d.getAmount() - transaction);
+
+                // do the transaction
+                d.pay(transaction);
+                r.pay(transaction);
+                reimbursementMap.get(d).add(new Transaction(r.getName(), transaction));
+            }
+        }
+
+        // transform the map of reimbursements into an array of reimbursements
+        return reimbursementMap.entrySet().stream()
+                .map( entry -> new Reimbursement(entry.getKey().getName(),
+                                                entry.getValue().toArray(new Transaction[0])) )
+                .toArray(Reimbursement[]::new);
+
+//        Stream.of(reimbursementMap.entrySet().toArray()).forEach(e -> System.out.format("%s\n", e.getKey().getName()));
     }
 
     /**
@@ -43,7 +93,7 @@ public class TripController {
      * @param analytics
      * @return
      */
-    private Reimbursement[] generatePayments(ExpenseAnalytics analytics) {
+    private Reimbursement[] generateMinimalAmountPayments(ExpenseAnalytics analytics) {
         List<Person> debtors = analytics.getDebtors();
         List<Person> recipients = analytics.getRecipients();
 
@@ -113,4 +163,14 @@ public class TripController {
         // convert reimbursements into an array
         return reimbursementList.toArray(new Reimbursement[reimbursementList.size()]);
     }
+
+    /**
+     *
+     * @param transactionAmount
+     * @return
+     */
+    public static double roundTransaction(double transactionAmount) {
+        return Math.floor(transactionAmount * 100) / 100.0;
+    }
+
 }
