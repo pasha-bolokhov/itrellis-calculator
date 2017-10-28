@@ -1,0 +1,22 @@
+[
+	{
+		"name":		"Cypress",
+		"expenses":	[15, 20, 35, 40]
+	},
+	{
+		"name":		"Miriam",
+		"expenses":	[55, 75]
+	},
+	{
+		"name":		"Lily",
+		"expenses":	[24, 28]
+	},
+	{
+		"name":		"Margaret",
+		"expenses":	[32, 45, 14]
+	},
+	{
+		"name":		"Maria",
+		"expenses":	[142, 118]
+	}
+]
