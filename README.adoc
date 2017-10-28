@@ -5,6 +5,10 @@
 [.lead]
 A tool that equalizes payments among a team of students who have returned from a trip
 
+== Features
+
+The project features Spring Boot framework for handling Http requests and JUnit for unit tests.
+
 == Installation
 
 This package can be installed directly from GitHub:
@@ -15,14 +19,23 @@ $ git clone https://github.com/pasha-bolokhov/itrellis-calculator.git
 
 == Usage
 
-The package is built with Gradle, and a `gradlew` script is provided within. Under normal conditions Gradle must be able to build the package.
+The package is built with Gradle, and a wrapper script `gradlew` is provided within. Under normal conditions Gradle must be able to build the package.
 
-The assembly of the program results in an executable JAR file in `build/libs`
+ $ ./gradlew assemble
 
-.build/libs
-----
-trip-calculator-service-0.1.0.jar
-----
+This will compile the program.
+The assembly of the program results in an executable JAR file in `build/libs`:
+
+ trip-calculator-service-0.1.0.jar
+
+
+It can either be executed directly with
+
+ $ java -jar build/libs/trip-calculator-service-0.1.0.jar
+
+or via task `bootRun`:
+
+ $ ./gradlew bootRun
 
 
 == Tests
