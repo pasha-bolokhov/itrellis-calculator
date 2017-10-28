@@ -21,6 +21,7 @@ public class TripController {
     @RequestMapping("/trip")
     public TripResponse trip(@RequestBody Person[] people) {
 
+        // Calculate debts and other analytics
         ExpenseAnalytics analytics = new ExpenseAnalytics(people);
         List<Person> debtors = analytics.getDebtors();
         List<Person> recipients = analytics.getRecipients();
