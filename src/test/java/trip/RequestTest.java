@@ -1,11 +1,12 @@
 package trip;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.context.embedded.LocalServerPort;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class RequestTest {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());     // GGGG
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     @LocalServerPort
@@ -50,6 +51,12 @@ public class RequestTest {
         runTestDataFile("src/test/json/sample-2.json");
     }
 
+    /**
+     *
+     * @param fileName
+     * @throws Exception
+     * @throws IOException
+     */
     private void runTestDataFile(String fileName) throws Exception, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         Person[] people = objectMapper.readValue(new File(fileName), Person[].class);
@@ -73,42 +80,60 @@ public class RequestTest {
 
         // count the debts and amounts
         ExpenseAnalytics analytics = new ExpenseAnalytics(people);
+        List<Person> allDebtors = analytics.getDebtors();
+        List<Person> allRecipients = analytics.getRecipients();
 
         // turn arrays into maps
-        Map<String, Double> debtorsMap =
-                analytics.getDebtors().stream().collect(Collectors.toMap(Person::getName, p -> p.getAmount()));
-        Map<String, Double> recipientsMap =
-                analytics.getRecipients().stream().collect(Collectors.toMap(Person::getName, p -> p.getAmount()));
+        Map<String, Person> debtorsMap = allDebtors.stream()
+                        .collect(Collectors.toMap(Person::getName, p -> p));
+        Map<String, Person> recipientsMap = allRecipients.stream()
+                        .collect(Collectors.toMap(Person::getName, p -> p));
 
         // run through all reimbursements
         for (Reimbursement reimbursement : plan.getReimbursements()) {
             assertThat(debtorsMap).containsKey(reimbursement.getName());
 
-            double debt = debtorsMap.get(reimbursement.getName());
+            Person debtor = debtorsMap.get(reimbursement.getName());
+            double debt = debtor.getAmount();
 
             // perform all transactions
             for (Transaction transaction : reimbursement.getPayments()) {
 
-                logger.info(String.format("GGGG %s[%.2f] \tpays\t %.2f \tto %s[%.2f] \t=>\t %s[%.2f] \t\t(%s[%.2f])",
+                logger.info(String.format("GGGG %s[%.2f] \tpays\t %g \tto %s[%.2f] \t=>\t %s[%.2f] \t\t(%s[%g])",
                                         reimbursement.getName(), debt, transaction.getAmount(),
-                                        transaction.getRecipient(), recipientsMap.get(transaction.getRecipient()),
+                                        transaction.getRecipient(), recipientsMap.get(transaction.getRecipient()).getAmount(),
                                         transaction.getRecipient(),
-                                            recipientsMap.get(transaction.getRecipient()) + transaction.getAmount(),
+                                            recipientsMap.get(transaction.getRecipient()).getAmount() + transaction.getAmount(),
                                         reimbursement.getName(), debt - transaction.getAmount()));
 
                 String recipientName = transaction.getRecipient();
                 assertThat(recipientsMap).containsKey(recipientName);
+                Person recipient = recipientsMap.get(recipientName);
                 assertThat(debt).isGreaterThanOrEqualTo(transaction.getAmount());
                 debt -= transaction.getAmount();
-                recipientsMap.put(recipientName,
-                                    recipientsMap.get(recipientName) - transaction.getAmount());
+                recipient.setAmount(recipient.getAmount() - transaction.getAmount());
+
+                // separately track how much they actually paid
+                debtor.setTotal(debtor.getTotal() + transaction.getAmount());
+                recipient.setTotal(recipient.getTotal() - transaction.getAmount());
             }
 
-            debtorsMap.put(reimbursement.getName(), debt);
+            debtor.setAmount(debt);
         }
 
         // check all debtors and recipients that the amounts have equalized
-        debtorsMap.forEach( (name, value) -> { assertThat(Math.abs(value)).isLessThanOrEqualTo(0.01); } );
-        recipientsMap.forEach( (name,value) -> { assertThat(Math.abs(value)).isLessThanOrEqualTo(0.01); } );
+        System.out.format("GGGG -------------------------------------------------------\n");
+        allDebtors.stream().forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal());} );
+        allRecipients.stream().forEach( p -> { System.out.format("GGGG %s has paid in total %g\n", p.getName(), p.getTotal());} );
+
+        double maxTotal = Stream.concat(allDebtors.stream(), allRecipients.stream())
+                            .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
+        double minTotal = Stream.concat(allDebtors.stream(), allRecipients.stream())
+                .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
+
+        System.out.format("GGGG ******************************* maximum discrepancy = %g\n", Math.abs(maxTotal - minTotal));
+
+        // test maximum tolerance
+        assertThat(Math.round(Math.abs(maxTotal - minTotal) * 100) / 100.0).isLessThanOrEqualTo(0.02);
     }
 }

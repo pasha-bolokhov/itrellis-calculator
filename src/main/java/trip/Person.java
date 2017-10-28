@@ -46,6 +46,10 @@ public class Person {
         return this.total;
     }
 
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
     public double calcTotal() {
         this.total = DoubleStream.of(this.expenses).sum();
         return this.total;

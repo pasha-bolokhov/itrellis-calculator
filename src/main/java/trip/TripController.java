@@ -99,7 +99,7 @@ public class TripController {
     /**
      *
      */
-    private double roundTransaction(double transaction) {
-        return (Math.floor(transaction * 100)) / 100.0;
+    public static double roundTransaction(double transaction) {
+        return Math.floor(transaction * 100) / 100.0;
     }
 }
