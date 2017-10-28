@@ -78,7 +78,6 @@ public class TripController {
                 // note that we have to re-adjust this amount after every transaction
                 // because of rounding
                 double equalPayments = d.getAmount() / (lastRecipient - j + 1);
-//                double equalPayments = d.getAmount() / numUnpaid;   // attempt to split payments evenly
 
                 // Form a transaction from person "d" to person "r"
                 double transaction = roundTransaction(equalPayments);
