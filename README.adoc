@@ -7,7 +7,7 @@ A tool that equalizes payments among a team of students who have returned from a
 
 == Features
 
-The project features Spring Boot framework for handling Http requests and JUnit for unit tests.
+NOTE: The project features Spring Boot framework for handling Http requests and JUnit for unit tests.
 
 == Installation
 
