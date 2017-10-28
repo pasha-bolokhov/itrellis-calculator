@@ -111,7 +111,7 @@ public class TripController {
         // convert reimbursements into an array
         Reimbursement[] allReimbursements = reimbursementList.toArray(new Reimbursement[reimbursementList.size()]);
 
-        // GGGG stub
+        // generate and send the response
         return new TripResponse(counter.incrementAndGet(), allReimbursements);
     }
 
