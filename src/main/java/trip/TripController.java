@@ -13,13 +13,12 @@ import java.util.logging.Logger;
 
 @RestController
 public class TripController {
-    private static final Logger LOGGER = Logger.getLogger(TripController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TripController.class.getName()); // GGGG
 
-    private static final String answerTemplate = "Payment for %s equals %g";
     private final AtomicLong counter = new AtomicLong();
 
     @RequestMapping("/trip")
-    public Trip trip(@RequestBody Person[] people) {
+    public TripResponse trip(@RequestBody Person[] people) {
         // calculate total expenses
         double grandTotal = 0.0;
         for (Person p : people) {
@@ -63,6 +62,9 @@ public class TripController {
         // the array of recipients stays sorted in increasing deficit order
         // When a recipient is reimbursed in full, he/she is excluded from further consideration
         Person[] recipientArray = recipients.toArray(new Person[recipients.size()]);
+        List<Reimbursement> reimbursementList = new ArrayList<Reimbursement>();             // prefer to keep it
+                                                                                            // as a list although
+                                                                                            // the size is known
         int firstUnpaid = 0;
         final int lastRecipient = recipientArray.length - 1;
         for (Person d : debtors) {
@@ -104,11 +106,14 @@ public class TripController {
             // for a reimbursement from this debtor
             Reimbursement reimbursement = new Reimbursement(d.getName(),
                                                             payments.toArray(new Transaction[payments.size()]));
+            reimbursementList.add(reimbursement);
         }
 
+        // convert reimbursements into an array
+        Reimbursement[] allReimbursements = reimbursementList.toArray(new Reimbursement[reimbursementList.size()]);
+
         // GGGG stub
-        return new Trip(counter.incrementAndGet(),
-                        String.format(answerTemplate, people[0].getName(), 0.0));
+        return new TripResponse(counter.incrementAndGet(), allReimbursements);
     }
 
     /**
