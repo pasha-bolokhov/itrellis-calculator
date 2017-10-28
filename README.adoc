@@ -2,15 +2,17 @@
 
 = Trip Expense Calculator
 
+[.lead]
 A tool that equalizes payments among a team of students who have returned from a trip.
 
 == Installation
 
-This package can be install from GitHub:
+This package can be installed directly from GitHub:
 [source,shell]
 ----
 $ git clone https://github.com/pasha-bolokhov/itrellis-calculator.git
 ----
+
 
 == Usage
 
