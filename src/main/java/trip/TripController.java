@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The controller handling client requests
+ */
 @RestController
 public class TripController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AtomicLong counter = new AtomicLong();
+    private final AtomicLong counter = new AtomicLong();                    // used for marking messages with ID
 
     @RequestMapping("/trip")
     public TripResponse trip(@RequestBody Person[] people) {
@@ -35,9 +38,19 @@ public class TripController {
     }
 
     /**
+     * Calculate and perform all equalizing payments.
+     * <p>
+     * This is the core computational algorithm of the package.
+     * <p>
+     * This algorithm minimizes the number of transactions by paying
+     * as much as possible in the beginning of the process.
+     * This is achieved by sorting the debtors and recipients in the large-to-small
+     * amount order and applying all debtors to a given recipient (if possible)
+     * before switching to the net recipient.
+     * Thus the recipients form an external loop, while debtors an internal one.
      *
-     * @param analytics
-     * @return
+     * @param analytics         initial state of debtors and recipients
+     * @return                  an array of <code>Reimbursement</code> instances
      */
     private Reimbursement[] generatePayments(ExpenseAnalytics analytics) {
         List<Person> debtors = analytics.getDebtors();
@@ -81,9 +94,23 @@ public class TripController {
     }
 
     /**
+     * Calculate and perform all equalizing payments.
+     * <p>
+     * This is an alternative core computational algorithm of the package.
+     * <p>
+     * This algorithm minimizes the amounts of each transaction by a given
+     * debtor.
+     * This is achieved by running a debtor across all recipients who
+     * are sorted beforehand in the order of increasing credit.
+     * Minimization is achieved by splitting the entire debtor's amount
+     * equally among all recipients.
+     * Such an "average" amount is in fact minimal, as going below it
+     * at a given transaction will cause an increase in later transactions.
      *
-     * @param analytics
-     * @return
+     * Thus the recipients form an internal loop, while debtors an external one.
+     *
+     * @param analytics         initial state of debtors and recipients
+     * @return                  an array of <code>Reimbursement</code> instances
      */
     private Reimbursement[] generateMinimalAmountPayments(ExpenseAnalytics analytics) {
         List<Person> debtors = analytics.getDebtors();
@@ -145,9 +172,13 @@ public class TripController {
     }
 
     /**
+     * Rounds an amount to a physical value
+     * <p>
+     * <code>floor()</code> tends to give slightly better
+     * results than <code>round()</code> or <code>ceil()</code>
      *
-     * @param transactionAmount
-     * @return
+     * @param transactionAmount     amount to round
+     * @return                      rounded sum
      */
     public static double roundTransaction(double transactionAmount) {
         return Math.floor(transactionAmount * 100) / 100.0;

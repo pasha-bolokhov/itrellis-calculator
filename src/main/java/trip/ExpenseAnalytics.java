@@ -3,12 +3,19 @@ package trip;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Performs analysis of all payments and splits
+ * the array of people into "debtors" and "recipients"
+ * <p>
+ * This class is useful both for the calculator
+ * and for testing purposes
+ */
 public class ExpenseAnalytics {
     private List<Person>    debtors;
     private List<Person>    recipients;
 
-    private double          total;
-    private double          share;
+    private double          total;              // total amount that was paid by everybody
+    private double          share;              // total (unrounded) amount divided by number of all people
 
     public ExpenseAnalytics(Person[] people) {
         // calculate total expenses
@@ -26,14 +33,11 @@ public class ExpenseAnalytics {
         List<Person> debtors = new ArrayList<Person>();
         List<Person> recipients = new ArrayList<Person>();
         for (Person p : people) {
-            p.calcDebt(share);
             // sort the person either into debtors or recipients
-            if (p.getAmount() > 0) {
+            if (p.calcDebt(share) > 0) {
                 debtors.add(p);
             } else {
                 recipients.add(p);
-                // for recipients, the amount is negative initially
-                p.setAmount(-p.getAmount());
             }
         }
         this.setDebtors(debtors);

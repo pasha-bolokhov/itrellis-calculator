@@ -23,6 +23,11 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Runs a number of tests
+ * <p>
+ * Test data is taken from Json files.
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class RequestTest {
@@ -56,12 +61,16 @@ public class RequestTest {
     }
 
     /**
+     * Reads Json data from <code>fileName</code>, sends it over to the server
+     * and checks the response by running all transactions on the initial
+     * state of people as obtained from <code>fileName</code>
      *
-     * @param fileName
+     * @param fileName          file path from which to load trip expenses
      * @throws Exception
      * @throws IOException
      */
     private void runTestDataFile(String fileName) throws Exception, IOException {
+
         ObjectMapper objectMapper = new ObjectMapper();
         Person[] people = objectMapper.readValue(new File(fileName), Person[].class);
 
@@ -76,9 +85,13 @@ public class RequestTest {
     }
 
     /**
+     * Runs the transactions from the server response on the list of people
+     * and checks whether the net payments have equalized
+     * <p>
+     * This function is run when after sending a test request to the server
      *
-     * @param plan
-     * @param people
+     * @param plan          A response from server containing payments to do
+     * @param people        Array of payments as obtained from test data
      */
     private void checkPlan(TripResponse plan, Person[] people) {
 

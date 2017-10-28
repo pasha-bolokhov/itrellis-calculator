@@ -1,5 +1,10 @@
 package trip;
 
+/**
+ * This is a DTO class to be send to the client.
+ * This is the ultimate response data which contains
+ * sequences of payments to be done
+ */
 public class TripResponse {
 
     private long id;
