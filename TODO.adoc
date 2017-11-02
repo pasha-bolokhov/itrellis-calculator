@@ -1,0 +1,7 @@
+
+
+= To Do
+
+* `generatePayments()` should definitely be split off into a new class or better interface
+
+* simple Angular front-end
