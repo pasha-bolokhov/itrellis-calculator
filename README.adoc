@@ -6,12 +6,12 @@
 The tool you need to keep your travel worry-free
 
 [.small]
-Ever been on a trip with your school friends? Remember that moment when your best friend Hannah starts behaving less and less friendly and starts being less excited about visiting other cool places? You feel like something's odd but Hannah's too polite to tell you direct. Are you losing your friend you knew since middle school? Oh and then you just get it — everytime it's time to pay for a meal or a cool exhibition, you and your other friend Jessica tend to always leave it to Hannah, with a promise to share the costs later. Oh well, and she's not super optimistic about it — who'll swear to her that you won't make a mistake when splitting the costs two weeks from now? That's when you two have this confidence talk, and you tell her about iTrellis-Calculator! It'll calculate the shares in an instant for you, leaving you with no worry about seeing more places. And guess what, Hannah gives you a big warm hug and there is not a single wrinkle on her forhead for the rest of your adventure. That was worth it!
+Ever been on a trip with your school friends? Remember that moment when your best friend Hannah starts behaving less and less friendly and starts being less excited about visiting other cool places? You feel like something's odd but Hannah's too polite to tell you direct. Are you losing your friend you knew since middle school? Oh and then you just get it — everytime it's time to pay for a meal or a cool exhibition, you and your other friend Jessica tend to always leave it to Hannah, with a promise to share the costs later. Oh well, and she's not super optimistic about it — who'll swear to her that you won't make a mistake when splitting the costs two weeks from now? That's when you two have this confidence talk, and you tell her about *iTrellis-Calculator*! It'll calculate the shares in an instant for you, leaving you with no worry about seeing more places. And guess what, Hannah gives you a big warm hug and there is not a single wrinkle on her forhead for the rest of your adventure. That was worth it!
 
 
 == Features
 
-The project features Spring Boot framework for handling Http requests, as well as JUnit, AssertJ and other libraries
+The project features *Spring Boot* framework for handling Http requests, as well as *JUnit*, *AssertJ* and other libraries
 
 
 == Installation
