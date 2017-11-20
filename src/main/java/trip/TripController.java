@@ -1,11 +1,10 @@
 package trip;
 
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,10 +56,10 @@ public class TripController {
         List<Person> recipients = analytics.getRecipients();
 
         // sort debtors in decreasing debt order
-        debtors.sort( (a, b) -> -Double.compare(a.getAmount(), b.getAmount()) );
+        debtors.sort(Comparator.comparingDouble(Person::getAmount).reversed());
 
         // sort recipients in decreasing deficit order
-        recipients.sort( (a, b) -> -Double.compare(a.getAmount(), b.getAmount()) );
+        recipients.sort(Comparator.comparingDouble(Person::getAmount).reversed());
 
         // fill in each recipient by all debtors at once
         Person[] debtorArray = debtors.toArray(new Person[debtors.size()]);
@@ -117,23 +116,23 @@ public class TripController {
         List<Person> recipients = analytics.getRecipients();
 
         // sort debtors in decreasing debt order
-        debtors.sort( (a, b) -> -Double.compare(a.getAmount(), b.getAmount()) );
+        debtors.sort(Comparator.comparingDouble(Person::getAmount).reversed());
 
         // sort recipients in increasing deficit order
-        recipients.sort( (a, b) -> Double.compare(a.getAmount(), b.getAmount()) );
+        recipients.sort(Comparator.comparingDouble(Person::getAmount));
 
         // Fill in all payments
         // Since, when possible, payments are done in equal transactions to all unpaid people,
         // the array of recipients stays sorted in increasing deficit order
         // When a recipient is reimbursed in full, he/she is excluded from further consideration
         Person[] recipientArray = recipients.toArray(new Person[recipients.size()]);
-        List<Reimbursement> reimbursementList = new ArrayList<Reimbursement>();             // prefer to keep it
+        List<Reimbursement> reimbursementList = new ArrayList<>();             // prefer to keep it
         // as a list although
         // the size is known
         int firstUnpaid = 0;
         final int lastRecipient = recipientArray.length - 1;
         for (Person d : debtors) {
-            List<Transaction> payments = new ArrayList<Transaction>();
+            List<Transaction> payments = new ArrayList<>();
 
             // run through all people who haven't been fully reimbursed yet
             for (int j = firstUnpaid; j <= lastRecipient; j++) {

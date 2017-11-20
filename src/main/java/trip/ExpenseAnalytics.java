@@ -30,8 +30,8 @@ public class ExpenseAnalytics {
         this.setShare(share);
 
         // calculate everyone's debt and split the team into debtors and recipients
-        List<Person> debtors = new ArrayList<Person>();
-        List<Person> recipients = new ArrayList<Person>();
+        List<Person> debtors = new ArrayList<>();
+        List<Person> recipients = new ArrayList<>();
         for (Person p : people) {
             // sort the person either into debtors or recipients
             if (p.calcDebt(share) > 0) {
