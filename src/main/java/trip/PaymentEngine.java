@@ -30,7 +30,7 @@ public class PaymentEngine {
      * @param analytics         initial state of debtors and recipients
      * @return                  an array of <code>Reimbursement</code> instances
      */
-    private Reimbursement[] generatePayments() {
+    public Reimbursement[] generatePayments() {
         List<Person> debtors = analytics.getDebtors();
         List<Person> recipients = analytics.getRecipients();
 
