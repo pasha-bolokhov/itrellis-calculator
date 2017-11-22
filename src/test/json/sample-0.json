@@ -1,7 +1,8 @@
 [
 	{
 		"name":		"Saudrine",
-		"expenses":	[5.75, 35.0, 12.79]
+		"expenses":	[5.75, 35.0, 12.79],
+		"freshman":	false
 	},
 	{
 		"name":		"Marine",
