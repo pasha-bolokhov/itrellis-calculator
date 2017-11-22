@@ -19,7 +19,7 @@ public class ExpenseAnalytics {
 
     private double total;              // total amount that was paid by everybody
     private double share;              // total (unrounded) amount divided by number of all people
-    private int numFreshmen;
+    private int    numFreshmen;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
