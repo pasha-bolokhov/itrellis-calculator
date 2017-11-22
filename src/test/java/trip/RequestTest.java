@@ -154,7 +154,7 @@ public class RequestTest {
         minNonFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> !p.isFreshman())
                 .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
 
-        logger.info("maximum discrepancy = {}", Math.abs(maxNonFreshmanTotal - minNonFreshmanTotal));
+        logger.info("maximum non-FRESHMAN discrepancy = {}", Math.abs(maxNonFreshmanTotal - minNonFreshmanTotal));
 
         // test maximum tolerance
         assertThat(Math.round(Math.abs(maxNonFreshmanTotal - minNonFreshmanTotal) * 100) / 100.0).isLessThanOrEqualTo(0.05);
