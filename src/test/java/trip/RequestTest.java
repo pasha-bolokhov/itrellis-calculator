@@ -58,6 +58,11 @@ public class RequestTest {
         runTestDataFile("src/test/json/sample-3.json");
     }
 
+    @Test
+    public void alternativeTestOnResponse() throws Exception, IOException {
+        runTestDataFile("src/test/json/trivial-0.json");
+    }
+
     /**
      * Reads Json data from <code>fileName</code>, sends it over to the server
      * and checks the response by running all transactions on the initial
