@@ -1,0 +1,27 @@
+[
+	{
+		"name":		"Saudrine",
+		"expenses":	[100],
+		"freshman":	false
+	},
+	{
+		"name":		"Marine",
+		"expenses":	[100],
+		"freshman":	false
+	},
+	{
+		"name":		"Liz",
+		"expenses":	[100],
+		"freshman":	false
+	}
+	{
+		"name":		"Beth",
+		"expenses":	[100],
+		"freshman":	false
+	}
+	{
+		"name":		"Sara",
+		"expenses":	[100],
+		"freshman":	false
+	}
+]
