@@ -24,6 +24,7 @@ public class Person {
     private double[]    expenses;               //
     private double      total = 0.0;            // total cost paid by this person
     private double      amount;                 // either amount owing or amount owed
+    private boolean     freshman;
     private boolean     paidInFull = false;     // a flag showing whether this user has completed
                                                 // all transactions
 
@@ -67,6 +68,8 @@ public class Person {
         this.total = total;
     }
 
+    public boolean isFreshman() { return this.freshman; }
+
     /**
      * Calculate total cost initially accrued by the person
      *
@@ -84,8 +87,13 @@ public class Person {
      * @param equalShare        averaged cost of the entire trip
      * @return                  signed debt (negative debt meaning credit)
      */
-    public double calcDebt(double equalShare) {
+    public double calcDebt(double equalShare, int numFreshmen, double totalExpense) {
         double debt = equalShare - this.total;
+
+        if (this.isFreshman()) {
+            debt += totalExpense * 0.1 / numFreshmen;
+        }
+
         this.amount = debt;
 
         // negative debt means the person is a recipient
@@ -93,7 +101,7 @@ public class Person {
             this.amount = -this.amount;
         }
 
-        // return positive or negative debt amount
+     // return positive or negative debt amount
         return debt;
     }
 

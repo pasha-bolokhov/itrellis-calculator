@@ -11,22 +11,28 @@ import java.util.ArrayList;
  * and for testing purposes
  */
 public class ExpenseAnalytics {
-    private List<Person>    debtors;
-    private List<Person>    recipients;
+    private List<Person> debtors;
+    private List<Person> recipients;
 
-    private double          total;              // total amount that was paid by everybody
-    private double          share;              // total (unrounded) amount divided by number of all people
+    private double total;              // total amount that was paid by everybody
+    private double share;              // total (unrounded) amount divided by number of all people
+    private int numFreshmen;
 
     public ExpenseAnalytics(Person[] people) {
         // calculate total expenses
         double grandTotal = 0.0;
+        numFreshmen = 0;
         for (Person p : people) {
             grandTotal += p.getTotal();
+            if (p.isFreshman()) {
+                numFreshmen++;
+            }
         }
         this.setTotal(grandTotal);
 
         // everyone's share
-        double share = this.getTotal() / people.length;
+        double share = 0.9 * this.getTotal() / people.length;
+
         this.setShare(share);
 
         // calculate everyone's debt and split the team into debtors and recipients
@@ -34,7 +40,7 @@ public class ExpenseAnalytics {
         List<Person> recipients = new ArrayList<>();
         for (Person p : people) {
             // sort the person either into debtors or recipients
-            if (p.calcDebt(share) > 0) {
+            if (p.calcDebt(share, this.numFreshmen, this.getTotal()) > 0) {
                 debtors.add(p);
             } else {
                 recipients.add(p);
@@ -75,4 +81,5 @@ public class ExpenseAnalytics {
     public void setShare(double share) {
         this.share = share;
     }
+
 }
