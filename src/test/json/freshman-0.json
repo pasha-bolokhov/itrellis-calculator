@@ -13,12 +13,12 @@
 		"name":		"Liz",
 		"expenses":	[100],
 		"freshman":	true
-	}
+	},
 	{
 		"name":		"Beth",
 		"expenses":	[100],
 		"freshman":	false
-	}
+	},
 	{
 		"name":		"Sara",
 		"expenses":	[100],

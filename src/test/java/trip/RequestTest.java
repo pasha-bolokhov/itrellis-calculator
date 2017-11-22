@@ -59,8 +59,8 @@ public class RequestTest {
     }
 
     @Test
-    public void alternativeTestOnResponse() throws Exception, IOException {
-        runTestDataFile("src/test/json/trivial-0.json");
+    public void nonTrivialTestOnResponse() throws Exception, IOException {
+        runTestDataFile("src/test/json/freshman-0.json");
     }
 
     /**
