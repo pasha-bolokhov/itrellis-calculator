@@ -133,15 +133,12 @@ public class RequestTest {
             debtor.setAmount(debt);
         }
 
-        // get all people as a stream
-        Stream allPeople = Stream.concat(allDebtors.stream(), allRecipients.stream());
-
         // check all FRESHMAN debtors and recipients that the amounts have equalized
         double maxFreshmanTotal = 0.0;
         double minFreshmanTotal = 0.0;
-        maxFreshmanTotal = allPeople.filter(p -> p.isFreshman())
-                            .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
-        minFreshmanTotal = allPeople.filter(p -> p.isFreshman())
+        maxFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> p.isFreshman())
+                .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
+        minFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> p.isFreshman())
                             .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
 
         logger.info("maximum FRESHMAN discrepancy = {}", Math.abs(maxFreshmanTotal - minFreshmanTotal));
@@ -152,9 +149,9 @@ public class RequestTest {
         // check all NON-freshman debtors and recipients that the amounts have equalized
         double maxNonFreshmanTotal = 0.0;
         double minNonFreshmanTotal = 0.0;
-        maxNonFreshmanTotal = allPeople.filter(p -> !p.isFreshman())
+        maxNonFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> !p.isFreshman())
                 .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
-        minNonFreshmanTotal = allPeople.filter(p -> !p.isFreshman())
+        minNonFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> !p.isFreshman())
                 .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
 
         logger.info("maximum discrepancy = {}", Math.abs(maxNonFreshmanTotal - minNonFreshmanTotal));
