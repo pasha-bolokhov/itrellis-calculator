@@ -6,10 +6,12 @@
 	},
 	{
 		"name":		"Marine",
-		"expenses":	[12.00, 15.00, 23.23]
+		"expenses":	[12.00, 15.00, 23.23],
+		"freshman":	false
 	},
 	{
 		"name":		"Liz",
-		"expenses":	[10.0, 20.0, 38.41, 45.00]
+		"expenses":	[10.0, 20.0, 38.41, 45.00],
+		"freshman":	false
 	}
 ]

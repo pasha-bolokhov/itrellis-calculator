@@ -3,6 +3,9 @@ package trip;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Performs analysis of all payments and splits
  * the array of people into "debtors" and "recipients"
@@ -18,6 +21,8 @@ public class ExpenseAnalytics {
     private double share;              // total (unrounded) amount divided by number of all people
     private int numFreshmen;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public ExpenseAnalytics(Person[] people) {
         // calculate total expenses
         double grandTotal = 0.0;
@@ -30,8 +35,13 @@ public class ExpenseAnalytics {
         }
         this.setTotal(grandTotal);
 
+        logger.info("got number of freshmen {}", numFreshmen);
+
         // everyone's share
-        double share = 0.9 * this.getTotal() / people.length;
+        double share = this.getTotal() / people.length;
+        if (numFreshmen > 0) {
+            share *= 0.9;
+        }
 
         this.setShare(share);
 
