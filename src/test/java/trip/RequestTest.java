@@ -133,20 +133,20 @@ public class RequestTest {
             debtor.setAmount(debt);
         }
 
-        // check all FRESHMAN debtors and recipients that the amounts have equalized
+        // check for all FRESHMAN debtors and recipients that the amounts have equalized
         double maxFreshmanTotal = 0.0;
         double minFreshmanTotal = 0.0;
         maxFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> p.isFreshman())
                 .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
         minFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> p.isFreshman())
-                            .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
+                .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
 
         logger.info("maximum FRESHMAN discrepancy = {}", Math.abs(maxFreshmanTotal - minFreshmanTotal));
 
         // test maximum tolerance
         assertThat(Math.round(Math.abs(maxFreshmanTotal - minFreshmanTotal) * 100) / 100.0).isLessThanOrEqualTo(0.05);
 
-        // check all NON-freshman debtors and recipients that the amounts have equalized
+        // check for all NON-freshman debtors and recipients that the amounts have equalized
         double maxNonFreshmanTotal = 0.0;
         double minNonFreshmanTotal = 0.0;
         maxNonFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> !p.isFreshman())
