@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * High level class which performs analysis on the set of people
+ * and computes all necessary payments
+ */
 public class PaymentEngine {
     private Person[] people;
     private ExpenseAnalytics analytics;
