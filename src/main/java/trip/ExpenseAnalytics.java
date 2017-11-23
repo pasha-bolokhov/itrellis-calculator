@@ -19,7 +19,7 @@ public class ExpenseAnalytics {
 
     private double total;              // total amount that was paid by everybody
     private double share;              // total (unrounded) amount divided by number of all people
-    private int    numFreshmen;
+    private int    numFreshmen;        // number of freshmen
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -50,7 +50,8 @@ public class ExpenseAnalytics {
         List<Person> recipients = new ArrayList<>();
         for (Person p : people) {
             // sort the person either into debtors or recipients
-            if (p.calcDebt(share, this.numFreshmen, this.getTotal()) > 0) {
+            if (p.calcDebt(p.isFreshman() ? share + 0.1 * grandTotal / numFreshmen
+                                          : share) > 0) {
                 debtors.add(p);
             } else {
                 recipients.add(p);

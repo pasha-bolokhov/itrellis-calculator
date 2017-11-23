@@ -87,13 +87,8 @@ public class Person {
      * @param equalShare        averaged cost of the entire trip
      * @return                  signed debt (negative debt meaning credit)
      */
-    public double calcDebt(double equalShare, int numFreshmen, double totalExpense) {
+    public double calcDebt(double equalShare) {
         double debt = equalShare - this.total;
-
-        if (this.isFreshman()) {
-            debt += totalExpense * 0.1 / numFreshmen;
-        }
-
         this.amount = debt;
 
         // negative debt means the person is a recipient
@@ -101,7 +96,7 @@ public class Person {
             this.amount = -this.amount;
         }
 
-     // return positive or negative debt amount
+        // return positive or negative debt amount
         return debt;
     }
 
