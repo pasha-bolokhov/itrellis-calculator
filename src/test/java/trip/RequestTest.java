@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -134,26 +135,25 @@ public class RequestTest {
         }
 
         // check for all FRESHMAN debtors and recipients that the amounts have equalized
-        double maxFreshmanTotal = 0.0;
-        double minFreshmanTotal = 0.0;
-        maxFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> p.isFreshman())
-                .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
-        minFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> p.isFreshman())
-                .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
-
+        Optional<Person> extremePerson;
+        extremePerson = Stream.of(people).filter(p -> p.isFreshman())
+                .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) );
+        double maxFreshmanTotal = extremePerson.isPresent() ? extremePerson.get().getTotal() : 0.0;
+        extremePerson = Stream.of(people).filter(p -> p.isFreshman())
+                .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) );
+        double minFreshmanTotal = extremePerson.isPresent() ? extremePerson.get().getTotal() : 0.0;
         logger.info("maximum FRESHMAN discrepancy = {}", Math.abs(maxFreshmanTotal - minFreshmanTotal));
 
         // test maximum tolerance
         assertThat(Math.round(Math.abs(maxFreshmanTotal - minFreshmanTotal) * 100) / 100.0).isLessThanOrEqualTo(0.05);
 
         // check for all NON-freshman debtors and recipients that the amounts have equalized
-        double maxNonFreshmanTotal = 0.0;
-        double minNonFreshmanTotal = 0.0;
-        maxNonFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> !p.isFreshman())
-                .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
-        minNonFreshmanTotal = Stream.concat(allDebtors.stream(), allRecipients.stream()).filter(p -> !p.isFreshman())
-                .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) ).get().getTotal();
-
+        extremePerson = Stream.of(people).filter(p -> !p.isFreshman())
+                .max( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) );
+        double maxNonFreshmanTotal = extremePerson.isPresent() ? extremePerson.get().getTotal() : 0.0;
+        extremePerson = Stream.of(people).filter(p -> !p.isFreshman())
+                .min( (a, b) -> Double.compare(a.getTotal(), b.getTotal()) );
+        double minNonFreshmanTotal = extremePerson.isPresent() ? extremePerson.get().getTotal() : 0.0;
         logger.info("maximum non-FRESHMAN discrepancy = {}", Math.abs(maxNonFreshmanTotal - minNonFreshmanTotal));
 
         // test maximum tolerance
